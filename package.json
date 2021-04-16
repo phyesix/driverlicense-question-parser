@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/phyesix/driverlicense-question-parser#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
+    "mariadb": "^2.5.3",
+    "mysql": "^2.18.1",
     "puppeteer": "^8.0.0"
   }
 }

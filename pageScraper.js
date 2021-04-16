@@ -29,21 +29,15 @@ const scraperObject = {
           await newPage.waitForSelector('#mtq_question-'+i+'-1 .mtq_question_text');
 
           let question = await newPage.$eval('#mtq_question-'+i+'-1 .mtq_question_text', text => text.textContent);
-          
-          let answers = await newPage.evaluate((i) => {
-            let answers = [];
-            let count = document.querySelectorAll('#mtq_question-'+i+'-1 .mtq_answer_text');
-            for (let a = 0; a < count.length; a++) {
-              answers.push(count[a].textContent);
+          let answers = await newPage.$eval('#mtq_question-'+i+'-1 .mtq_answer_table', (el) => {
+            let answersArray = [];
+            for (let i = 0; i < el.getElementsByClassName("mtq_answer_text").length; i++) {
+              let element = el.getElementsByClassName("mtq_answer_text")[i].textContent.trim();
+              answersArray.push(element);
             }
-            return answers;
+            return answersArray;
           });
-
-          let rightAnswer = await newPage.evaluate((i) => {
-            // document.querySelector('#mtq_question-'+i+'-1 .mtq_clickable').click();
-            return document.querySelector('#mtq_question-'+i+'-1 .mtq_correct_marker').previousElementSibling.textContent;
-          });
-
+          let rightAnswer = await newPage.$eval('#mtq_question-'+i+'-1 .mtq_correct_marker', el => el.parentElement.firstElementChild.textContent);
           let dataObj = {
             question: question,
             answers: answers,
@@ -51,11 +45,10 @@ const scraperObject = {
           }
 
           console.log("dataObj", dataObj);
-          return;
         }
 
-        //resolve(dataObj);
-        //await newPage.close();
+        resolve(dataObj);
+        await newPage.close();
     });
 
     for(link in urls){
